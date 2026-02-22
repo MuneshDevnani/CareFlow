@@ -81,8 +81,11 @@ const TaskForm = () => {
                 await taskService.createTask(formData);
             }
             navigate('/dashboard');
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Failed to save task');
+        } catch (err: unknown) {
+            const message = err instanceof Error && 'response' in err
+                ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+                : undefined;
+            setError(message || 'Failed to save task');
         } finally {
             setLoading(false);
         }

@@ -26,8 +26,11 @@ const Login = () => {
         try {
             await login({ email, password });
             navigate('/dashboard');
-        } catch (err: any) {
-            setError(err.response?.data?.message || 'Login failed. Please try again.');
+        } catch (err: unknown) {
+            const message = err instanceof Error && 'response' in err
+                ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+                : undefined;
+            setError(message || 'Login failed. Please try again.');
         } finally {
             setLoading(false);
         }
